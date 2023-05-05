@@ -9,7 +9,7 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
     $extension = (Split-Path -Path $BuildGraphPath -Leaf).Split(".")[1];
 
     if ( $extension -ne "xml" ) {
-        throw "The buildgraph file is not a XML file"
+        throw "The buildgraph file is not a XML file : $($BuildGraphPath)"
     }
 
     $arguments = "BuildGraph -script=`"$($BuildGraphPath)`" "
