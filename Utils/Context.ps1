@@ -9,7 +9,6 @@ class Context
     [String] $LocalBuildsFolder;
     [String] $BuildGraphPath;
     [String] $Environment;
-    $EnvironmentBuildgraphParameters = @{};
 
     Context() 
     {

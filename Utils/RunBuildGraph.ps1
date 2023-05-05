@@ -18,15 +18,7 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
         $arguments += "-target=`"$target`""
     }
     
-    $common_options = @{
-        "Publish_Directory" = $global:context.LocalBuildsFolder
-    }
-
-    foreach ($h in $common_options.GetEnumerator()) {
-        $arguments += " -set:$($h.Name)=$($h.Value)"
-    }
-
-    foreach ($h in $global:context.EnvironmentBuildgraphParameters.GetEnumerator()) {
+    foreach ($h in $global:ProjectConfig.BUILDGRAPH_SHARED_PROPERTIES.GetEnumerator()) {
         $arguments += " -set:$($h.Name)=$($h.Value)"
     }
 
