@@ -17,15 +17,6 @@ class ProjectInfos
     [String] $FullPath;
 }
 
-$ConfigFiles = Get-ChildItem -Recurse "$PSScriptRoot\Config" -Include *.ps1
-
-foreach ( $ConfigFile in $ConfigFiles ) { 
-    . $ConfigFile.FullName 
-    
-    Write-Host "Loaded config file $($ConfigFile.FullName )" -ForegroundColor Green
-    Write-Host
-}
-
 $ScriptFiles = Get-ChildItem -Recurse "$PSScriptRoot\Utils" -Include *.ps1 
  
 foreach ( $ScriptFile in $ScriptFiles ) { 
@@ -35,4 +26,16 @@ foreach ( $ScriptFile in $ScriptFiles ) {
 $global:context = New-Object Context
 
 Write-Host -ForegroundColor Green "Module $(Split-Path $PSScriptRoot -Leaf) was successfully loaded."
+Write-Host
+
+$ConfigFolder = Join-Path $global:context.Projectinfos.Folder -ChildPath "Config\PoshScripts"
+
+$ConfigFiles = Get-ChildItem -Recurse $ConfigFolder -Include *.ps1
+
+foreach ( $ConfigFile in $ConfigFiles ) { 
+    . $ConfigFile.FullName 
+    
+    Write-Host "Loaded config file $($ConfigFile.FullName )" -ForegroundColor Green
+}
+
 Write-Host
