@@ -17,7 +17,7 @@ class ProjectInfos
     [String] $FullPath;
 }
 
-$ConfigFiles = Get-ChildItem -Recurse "$PSScriptRoot\..\Config" -Include *.ps1
+$ConfigFiles = Get-ChildItem -Recurse "$PSScriptRoot\Config" -Include *.ps1
 
 foreach ( $ConfigFile in $ConfigFiles ) { 
     . $ConfigFile.FullName 
