@@ -12,9 +12,13 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
         throw "The buildgraph file is not a XML file : $($BuildGraphPath)"
     }
 
+    $arguments = "BuildGraph -script=`"$($BuildGraphPath)`""
+
     $scripts_dir = Join-Path -Path $global:context.ProjectInfos.Folder -ChildPath $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
 
-    $arguments = "BuildGraph -ScriptDir=`"$($scripts_dir)`" -script=`"$($BuildGraphPath)`" "
+    if ( ( Test-Path $scripts_dir ) -eq $True ) {
+        $arguments += " -ScriptDir=`"$($scripts_dir)`""
+    }
 
     if ( $target -ne "" ) {
         $arguments += " -target=`"$target`""
