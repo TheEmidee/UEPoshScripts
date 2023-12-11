@@ -34,9 +34,12 @@ function Resolve-EnginePath( [String] $EngineAssociation ) {
         }
     }
 
-    if (Test-Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds")
-    {
-        return Get-ItemPropertyValue -Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds" -Name $EngineAssociation
+    try {
+        if (Test-Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds") {
+            return Get-ItemPropertyValue -Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds" -Name $EngineAssociation
+        }
+    } catch {
+
     }
 
     if (Test-Path "HKLM:\SOFTWARE\EpicGames\Unreal Engine\$($EngineAssociation)") {
