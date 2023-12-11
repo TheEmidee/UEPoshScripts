@@ -19,6 +19,21 @@ function Get-ProjectEngineAssociation( [String] $ProjectPath ) {
 }
 
 function Resolve-EnginePath( [String] $EngineAssociation ) {
+    # First check if we are on a CI node
+    if ( ( ![string]::IsNullOrWhiteSpace( $env:NODE_UE4_ROOT ) ) ) {
+        if ( Test-Path $env:NODE_UE4_ROOT ) {
+            $engine_path = Join-Path -Path $env:NODE_UE4_ROOT -ChildPath $EngineAssociation
+
+            if ( Test-Path $engine_path ) {
+                return $engine_path
+            }
+
+            Write-Warning "Environment variable NODE_UE4_ROOT is set, but we could not find a folder at this location : $($engine_path)"
+        } else {
+            Write-Warning "Environment variable NODE_UE4_ROOT is set, but it points to an invalid folder : $($env:NODE_UE4_ROOT)"
+        }
+    }
+
     if (Test-Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds")
     {
         return Get-ItemPropertyValue -Path "HKCU:\SOFTWARE\Epic Games\Unreal Engine\Builds" -Name $EngineAssociation
@@ -48,20 +63,6 @@ function Resolve-EnginePath( [String] $EngineAssociation ) {
         }
     }
 
-    # Everything failed. Now check if we are on a CI node
-    if ( ( ![string]::IsNullOrWhiteSpace( $env:NODE_UE4_ROOT ) ) ) {
-        if ( Test-Path $env:NODE_UE4_ROOT ) {
-            $engine_path = Join-Path -Path $env:NODE_UE4_ROOT -ChildPath $EngineAssociation
-
-            if ( Test-Path $engine_path ) {
-                return $engine_path
-            }
-
-            Write-Warning "Environment variable NODE_UE4_ROOT is set, but we could not find a folder at this location : $($engine_path)"
-        } else {
-            Write-Warning "Environment variable NODE_UE4_ROOT is set, but it points to an invalid folder : $($env:NODE_UE4_ROOT)"
-        }
-    }
 
     # Otherwise, we couldn't locate the engine.
     Write-Error "Unable to locate engine description by `"$EngineAssociation`" (checked registry, Program Files and absolute path)."
