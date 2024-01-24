@@ -20,17 +20,17 @@ function Get-ProjectEngineAssociation( [String] $ProjectPath ) {
 
 function Resolve-EnginePath( [String] $EngineAssociation ) {
     # First check if we are on a CI node
-    if ( ( ![string]::IsNullOrWhiteSpace( $env:NODE_UE4_ROOT ) ) ) {
-        if ( Test-Path $env:NODE_UE4_ROOT ) {
-            $engine_path = Join-Path -Path $env:NODE_UE4_ROOT -ChildPath $EngineAssociation
+    if ( ( ![string]::IsNullOrWhiteSpace( $env:NODE_UE_ROOT ) ) ) {
+        if ( Test-Path $env:NODE_UE_ROOT ) {
+            $engine_path = Join-Path -Path $env:NODE_UE_ROOT -ChildPath $EngineAssociation
 
             if ( Test-Path $engine_path ) {
                 return $engine_path
             }
 
-            Write-Warning "Environment variable NODE_UE4_ROOT is set, but we could not find a folder at this location : $($engine_path)"
+            Write-Warning "Environment variable NODE_UE_ROOT is set, but we could not find a folder at this location : $($engine_path)"
         } else {
-            Write-Warning "Environment variable NODE_UE4_ROOT is set, but it points to an invalid folder : $($env:NODE_UE4_ROOT)"
+            Write-Warning "Environment variable NODE_UE_ROOT is set, but it points to an invalid folder : $($env:NODE_UE_ROOT)"
         }
     }
 
