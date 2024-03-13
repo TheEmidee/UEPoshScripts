@@ -23,7 +23,7 @@ foreach ( $ScriptFile in $ScriptFiles ) {
     . $ScriptFile.FullName
 }
  
-$global:context = New-Object Context
+$global:context = [Context]::new()
 
 Write-Host -ForegroundColor Green "Module $(Split-Path $PSScriptRoot -Leaf) was successfully loaded."
 Write-Host
