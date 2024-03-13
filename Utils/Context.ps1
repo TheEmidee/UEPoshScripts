@@ -6,9 +6,6 @@ class Context
     [String] $EditorPath;
     $EngineDefinition;
     $ProjectInfos;
-    [String] $BuildGraphPath;
-    [String] $Environment;
-
     Context() 
     {
         $this.ProjectInfos = Get-ProjectInfos
