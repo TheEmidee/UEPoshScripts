@@ -1,6 +1,6 @@
 function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @{}, [string] $extra_parameters = "" )
 {
-    $BuildGraphPath = Join-Path -Path $global:context.ProjectInfos.Folder -ChildPath $global:ProjectConfig.BUILDGRAPH_PATH
+    $BuildGraphPath = Join-Path -Path $global:context.ProjectInfos.RootFolder -ChildPath $global:ProjectConfig.BUILDGRAPH_PATH
 
     if ( ( Test-Path $BuildGraphPath ) -eq $False ) {
         throw "Impossible to get a correct path to the buildgraph XML file"
@@ -16,7 +16,7 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
 
     if( $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY -ne "" )
     {
-        $scripts_dir = Join-Path -Path $global:context.ProjectInfos.Folder -ChildPath $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
+        $scripts_dir = Join-Path -Path $global:context.ProjectInfos.RootFolder -ChildPath $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
 
         if ( ( Test-Path $scripts_dir ) -eq $True ) {
             $arguments += " -ScriptDir=`"$($scripts_dir)`""

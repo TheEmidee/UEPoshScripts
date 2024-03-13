@@ -9,7 +9,7 @@ $global:context = [Context]::new()
 Write-Host -ForegroundColor Green "Module $(Split-Path $PSScriptRoot -Leaf) was successfully loaded."
 Write-Host
 
-$ConfigFolder = Join-Path $global:context.Projectinfos.Folder -ChildPath "Config\PoshScripts"
+$ConfigFolder = Join-Path $global:context.Projectinfos.RootFolder -ChildPath "Config\PoshScripts"
 
 $ConfigFiles = Get-ChildItem -Recurse $ConfigFolder -Include *.ps1
 

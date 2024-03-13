@@ -32,27 +32,27 @@ class ProjectFolders
 
 class ProjectInfos
 {
-    [String] $Folder;
+    [String] $RootFolder;
     [String] $ProjectName;
     [String] $UProjectPath;
     [ProjectFolders] $ProjectFolders;
 
     ProjectInfos() {
-        $this.Folder = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\" )
-        $u_project_name = Get-ChildItem $this.Folder -File '*.uproject'
+        $this.RootFolder = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\" )
+        $u_project_name = Get-ChildItem $this.RootFolder -File '*.uproject'
 
         if ( $null -eq $u_project_name ) {
             throw "Impossible to find a uproject file"
         }
 
         $this.ProjectName = $u_project_name.BaseName
-        $this.UProjectPath = Resolve-Path ( Join-Path -Path $this.Folder -ChildPath $u_project_name.Name )
-        $this.ProjectFolders = [ProjectFolders]::new( $this.Folder )
+        $this.UProjectPath = Resolve-Path ( Join-Path -Path $this.RootFolder -ChildPath $u_project_name.Name )
+        $this.ProjectFolders = [ProjectFolders]::new( $this.RootFolder )
     }
 
     [void] DumpToHost(){
         Write-Host "----- Project infos -----"
-        Write-Host " * Folder : $($this.Folder)"
+        Write-Host " * Folder : $($this.RootFolder)"
         Write-Host " * ProjectName : $($this.ProjectName)"
         Write-Host " * UProjectPath : $($this.UProjectPath)"
         Write-Host "----- Project infos -----"

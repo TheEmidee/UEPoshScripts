@@ -7,5 +7,5 @@ RunBuild @(
     "-project=`"$($global:context.ProjectInfos.UProjectPath)`""
     "-WaitMutex"
     "-FromMsBuild"
-    "-log=`"$($global:context.ProjectInfos.Folder)/Saved/Logs/Compile_Editor_Development_Win64.log"
+    "-log=`"$($global:context.ProjectInfos.RootFolder)/Saved/Logs/Compile_Editor_Development_Win64.log"
 )
