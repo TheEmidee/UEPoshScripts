@@ -1,8 +1,54 @@
+class ProjectSavedFolders
+{
+    [String] $BuildGraph;
+    [String] $Jenkins;
+    [String] $Temp;
+    [String] $Tests;
+
+    ProjectSavedFolders(
+        [String] $SavedFolder
+    ) {
+        $this.BuildGraph = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "BuildGraph" )
+        $this.Jenkins = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Jenkins" )
+        $this.Temp = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Temp" )
+        $this.Tests = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Tests" )
+    }
+}
+
+class ProjectFolders
+{
+    [String] $Config;
+    [String] $Saved;
+    [ProjectSavedFolders] $SavedFolders;
+
+    ProjectFolders(
+        [String] $RootFolder
+    ) {
+        $this.Config = Resolve-Path ( Join-Path -Path $RootFolder -ChildPath "Config" )
+        $this.Saved = Resolve-Path ( Join-Path -Path $RootFolder -ChildPath "Saved" )
+        $this.SavedFolders = [ProjectSavedFolders]::new( $this.Saved )
+    }
+}
+
 class ProjectInfos
 {
     [String] $Folder;
     [String] $ProjectName;
     [String] $UProjectPath;
+    [ProjectFolders] $ProjectFolders;
+
+    ProjectInfos() {
+        $this.Folder = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\" )
+        $u_project_name = Get-ChildItem $this.Folder -File '*.uproject'
+
+        if ( $null -eq $u_project_name ) {
+            throw "Impossible to find a uproject file"
+        }
+
+        $this.ProjectName = $u_project_name.BaseName
+        $this.UProjectPath = Resolve-Path ( Join-Path -Path $this.Folder -ChildPath $u_project_name.Name )
+        $this.ProjectFolders = [ProjectFolders]::new( $this.Folder )
+    }
 
     [void] DumpToHost(){
         Write-Host "----- Project infos -----"
@@ -15,18 +61,5 @@ class ProjectInfos
 }
 
 function Get-ProjectInfos() {
-    $project_infos = [ProjectInfos]::new()
-
-    $project_infos.Folder = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\" )
-    $u_project_name = Get-ChildItem $project_infos.Folder -File '*.uproject'
-
-    if ( $null -eq $u_project_name ) {
-        throw "Impossible to find a uproject file"
-    }
-
-    $project_infos.ProjectName = $u_project_name.BaseName
-
-    $project_infos.UProjectPath = Resolve-Path ( Join-Path -Path $project_infos.Folder -ChildPath $u_project_name.Name )
-
-    return $project_infos
+    return [ProjectInfos]::new()
 }
