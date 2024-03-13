@@ -38,15 +38,24 @@ class ProjectInfos
     [ProjectFolders] $ProjectFolders;
 
     ProjectInfos() {
-        $this.RootFolder = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\" )
-        $u_project_name = Get-ChildItem $this.RootFolder -File '*.uproject'
+        $ParentDirectory = Get-Item $PSScriptRoot
+        $MaxDepth = 5
+        $Depth = 0
 
-        if ( $null -eq $u_project_name ) {
+        while ( $ParentDirectory -and $Depth -lt $MaxDepth -and -not ( Get-ChildItem -Path $ParentDirectory.FullName -Filter "*.uproject" ) ) {
+            $ParentDirectory = Get-Item $ParentDirectory.FullName | Get-Item -Path { Split-Path -Parent $_.FullName }
+            $Depth++
+        }
+
+        if ( -not $ParentDirectory ) {
             throw "Impossible to find a uproject file"
         }
 
-        $this.ProjectName = $u_project_name.BaseName
-        $this.UProjectPath = Resolve-Path ( Join-Path -Path $this.RootFolder -ChildPath $u_project_name.Name )
+        $this.RootFolder = $ParentDirectory
+        $UProjectFile = Get-ChildItem $this.RootFolder -File '*.uproject'
+
+        $this.ProjectName = $UProjectFile.BaseName
+        $this.UProjectPath = $UProjectFile.FullName
         $this.ProjectFolders = [ProjectFolders]::new( $this.RootFolder )
     }
 
