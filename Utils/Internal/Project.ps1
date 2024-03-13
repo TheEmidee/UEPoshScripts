@@ -8,10 +8,11 @@ class ProjectSavedFolders
     ProjectSavedFolders(
         [String] $SavedFolder
     ) {
-        $this.BuildGraph = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "BuildGraph" )
-        $this.Jenkins = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Jenkins" )
-        $this.Temp = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Temp" )
-        $this.Tests = Resolve-Path ( Join-Path -Path $SavedFolder -ChildPath "Tests" )
+        # Don't use Resolve-Path as the folders may not exist
+        $this.BuildGraph = Join-Path -Path $SavedFolder -ChildPath "BuildGraph"
+        $this.Jenkins = Join-Path -Path $SavedFolder -ChildPath "Jenkins"
+        $this.Temp = Join-Path -Path $SavedFolder -ChildPath "Temp"
+        $this.Tests = Join-Path -Path $SavedFolder -ChildPath "Tests"
     }
 }
 
