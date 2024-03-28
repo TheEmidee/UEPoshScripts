@@ -4,6 +4,8 @@ class ProjectSavedFolders
     [String] $Jenkins;
     [String] $Temp;
     [String] $Tests;
+    [String] $LocalBuilds;
+    [String] $StagedBuilds;
 
     ProjectSavedFolders(
         [String] $SavedFolder
@@ -13,6 +15,8 @@ class ProjectSavedFolders
         $this.Jenkins = Join-Path -Path $SavedFolder -ChildPath "Jenkins"
         $this.Temp = Join-Path -Path $SavedFolder -ChildPath "Temp"
         $this.Tests = Join-Path -Path $SavedFolder -ChildPath "Tests"
+        $this.LocalBuilds = Join-Path -Path $SavedFolder -ChildPath "LocalBuilds"
+        $this.StagedBuilds = Join-Path -Path $SavedFolder -ChildPath "StagedBuilds"
     }
 }
 
@@ -25,8 +29,8 @@ class ProjectFolders
     ProjectFolders(
         [String] $RootFolder
     ) {
-        $this.Config = Resolve-Path ( Join-Path -Path $RootFolder -ChildPath "Config" )
-        $this.Saved = Resolve-Path ( Join-Path -Path $RootFolder -ChildPath "Saved" )
+        $this.Config = Join-Path -Path $RootFolder -ChildPath "Config"
+        $this.Saved = Join-Path -Path $RootFolder -ChildPath "Saved"
         $this.SavedFolders = [ProjectSavedFolders]::new( $this.Saved )
     }
 }
