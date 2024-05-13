@@ -4,6 +4,7 @@ class Context
     [String] $UBTPath;
     [String] $BuildPath;
     [String] $EditorPath;
+    [String] $PoshScriptsConfigFolder;
     $EngineDefinition;
     $ProjectInfos;
     
@@ -37,5 +38,13 @@ class Context
         }
 
         $this.EditorPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Engine\Binaries\Win64\UnrealEditor.exe"
+
+        $ConfigFolder = "Config\PoshScripts"
+
+        if ( $this.ProjectInfos.UProjectPath -ne "" ) {
+            $this.PoshScriptsConfigFolder = Join-Path $this.ProjectInfos.RootFolder -ChildPath $ConfigFolder
+        } else {
+            $this.PoshScriptsConfigFolder = Join-Path $this.EngineDefinition.Path -ChildPath $ConfigFolder
+        }
     }
 }
