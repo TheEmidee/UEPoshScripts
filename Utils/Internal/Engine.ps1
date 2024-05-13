@@ -95,8 +95,18 @@ function Get-EngineVersion( [string] $EnginePath ) {
 function Get-EngineDefinition( [String] $UProjectPath ) {
     $engine_definition = [EngineDefinition]::new();
 
-    $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $UProjectPath )
-    $engine_definition.Path = Resolve-EnginePath( $engine_definition.EngineAssociation )
+    if ( $UProjectPath -ne "" ) {
+        $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $UProjectPath )
+        $engine_definition.Path = Resolve-EnginePath( $engine_definition.EngineAssociation )
+    } else {
+        $EnginePath = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "../../../" )
+        if ( Test-Path -Path ( "$($EnginePath)/Setup.bat" ) ) {
+            $engine_definition.Path = $EnginePath
+        } else{
+            exit 1
+        }
+    }
+
     $engine_definition.Version = Get-EngineVersion( $engine_definition.Path )
 
     return $engine_definition
