@@ -1,8 +1,4 @@
-# . "$PSScriptRoot\GetBuildGraphJSON.ps1"
-# . "$PSScriptRoot\GetGroovyJobsFromBuildGraphJSON.ps1"
-# . "$PSScriptRoot\ExportJenkinsFile.ps1"
-
-function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $OutputFolder, [String] $BuildgraphTargetName, [hashtable] $BuildgraphPropertyMap, [hashtable] $TokenReplacementMap = @{} ) {
+function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $BuildgraphTargetName, [hashtable] $BuildgraphPropertyMap, [hashtable] $TokenReplacementMap = @{} ) {
 
     $JSON = GetBuildGraphJSON $BuildgraphTargetName $BuildgraphPropertyMap
     $GroovyJobs_PR = GetGroovyJobsFromBuildGraphJSON $JSON $BuildgraphPropertyMap
@@ -10,6 +6,8 @@ function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $Output
         "JOB_DEPENDENCIES" = $GroovyJobs_PR;
     }
 
+    $OutputFolder = $global:JenkinsConfig.OUTPUT_FOLDER
     $OutputFile = Join-Path -Path $OutputFolder -ChildPath "$($TemplateFileName)"
+    
     ExportJenkinsFile "$($TemplateFileName).template" $OutputFile $TokenReplacementMap
 }

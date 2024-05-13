@@ -1,5 +1,5 @@
 function ExportJenkinsFile( [string] $TemplateFileName, [ string ] $OutputFilePath, [ hashtable ] $TokenReplacementMap = @{} ) {
-    $TemplateFolder = Join-Path -Path $PSScriptRoot -ChildPath "Templates"
+    $TemplateFolder = $global:JenkinsConfig.TEMPLATES_FOLDER
     $TemplateFilePath = Join-Path -Path $TemplateFolder -ChildPath $TemplateFileName
     $TemplateContent = Get-Content -Raw -Path $TemplateFilePath
 

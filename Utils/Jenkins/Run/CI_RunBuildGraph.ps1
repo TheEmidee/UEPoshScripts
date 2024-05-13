@@ -5,7 +5,7 @@ function CI_RunBuildGraph {
     [string] $TaskProperties = ""
     )
 
-    $SharedStorageDir = "$($global:FishingConfig.Storage.BUILDGRAPH_SHARED_STORAGE_PATH)\$($BuildTag)"
+    $SharedStorageDir = "$($global:JenkinsConfig.BUILDGRAPH_SHARED_STORAGE_PATH)\$($BuildTag)"
 
     $ExtraArguments += " $($TaskProperties) -BuildMachine -SharedStorageDir=`"$($SharedStorageDir)`" -WriteToSharedStorage -SingleNode=`"$($BuildGraphTarget)`" -BuildMachine -NoP4"
 
@@ -50,11 +50,6 @@ function CI_RunBuildGraph {
     $TestsFolder = $global:context.ProjectInfos.ProjectFolders.SavedFolders.Tests
     Write-Host "Remove Tests folder : $($TestsFolder)"
     Remove-Item $TestsFolder -Recurse -ErrorAction Ignore
-
-    Write-Host "Net Use on $($global:FishingConfig.Storage.VERSIONS_PATH)"
-
-    net use $global:FishingConfig.Storage.VERSIONS_PATH /delete
-    net use  $global:FishingConfig.Storage.VERSIONS_PATH /u:$($global:FishingConfig.Storage.NAS_USERNAME) $($global:FishingConfig.Storage.NAS_PASSWORD)
 
     Exit RunBuildGraph "" @{} $ExtraArguments
 }
