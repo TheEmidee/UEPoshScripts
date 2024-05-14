@@ -14,9 +14,11 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
 
     $arguments = "BuildGraph -script=`"$($BuildGraphPath)`""
 
-    if( ( [string]::IsNullOrEmpty( $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY ) -eq $False ) -and ( Test-Path -Path ) )
+    $AutomationScriptsDirectory = $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
+
+    if( ( [string]::IsNullOrEmpty( $AutomationScriptsDirectory ) -eq $False ) -and ( Test-Path -Path $AutomationScriptsDirectory ) )
     {
-        $scripts_dir = Join-Path -Path $global:context.ProjectInfos.RootFolder -ChildPath $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
+        $scripts_dir = Join-Path -Path $global:context.ProjectInfos.RootFolder -ChildPath $AutomationScriptsDirectory
 
         if ( ( Test-Path $scripts_dir ) -eq $True ) {
             $arguments += " -ScriptDir=`"$($scripts_dir)`""
