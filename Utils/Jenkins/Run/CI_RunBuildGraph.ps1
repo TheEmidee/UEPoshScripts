@@ -7,7 +7,7 @@ function CI_RunBuildGraph {
 
     $SharedStorageDir = "$($global:JenkinsConfig.BUILDGRAPH_SHARED_STORAGE_PATH)\$($BuildTag)"
 
-    $ExtraArguments += " $($TaskProperties) -BuildMachine -SharedStorageDir=`"$($SharedStorageDir)`" -WriteToSharedStorage -SingleNode=`"$($BuildGraphTarget)`" -BuildMachine -NoP4"
+    $ExtraArguments += " $($TaskProperties) -BuildMachine -SharedStorageDir=`"$($SharedStorageDir)`" -WriteToSharedStorage -SingleNode=`"$($BuildGraphTarget)`" -NoP4"
 
     $TaskSharedStorageDir = "$($SharedStorageDir)\$($BuildGraphTarget)"
     Write-Host "Remove task shared storage dir $($TaskSharedStorageDir)"
