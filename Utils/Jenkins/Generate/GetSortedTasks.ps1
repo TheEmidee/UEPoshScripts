@@ -10,7 +10,8 @@ function GetSortedTasks {
 
     $inDegree = @{}
     $queue = New-Object System.Collections.Queue
-    $result = @()
+    
+    $result = [ Collections.Generic.List[ System.Collections.Generic.HashSet[ string ] ] ]::new()
 
     # Initialize in-degree for each task
     foreach ($task in $tasks) {
@@ -18,7 +19,7 @@ function GetSortedTasks {
     }
 
     # Update from the original algorithm : have a list of tasks with no dependencies and add them all at the end
-    $TasksWithNoDependencies = [System.Collections.Generic.HashSet[ string ]]::new()
+    $TasksWithNoDependencies = [ System.Collections.Generic.HashSet[ string ] ]::new()
     
     foreach ( $Task in $tasks ) {
         [void] $TasksWithNoDependencies.Add( $Task )
@@ -44,12 +45,12 @@ function GetSortedTasks {
 
     # Process tasks
     while ($queue.Count -ne 0) {
-        $parallelTasks = @()
+        $parallelTasks = [ System.Collections.Generic.HashSet[ string ] ]::new()
 
         # Process all tasks with in-degree zero in parallel
         $tasksToProcess = $queue.ToArray()
         foreach ($current in $tasksToProcess) {
-            $parallelTasks += $current
+            [ void ] $parallelTasks.Add( $current )
 
             # Reduce in-degree for dependent tasks
             foreach ($dependency in $dependencies) {
@@ -64,10 +65,10 @@ function GetSortedTasks {
             $queue.Dequeue()  # Remove the processed task
         }
 
-        $result += ,$parallelTasks.Clone()
+        [ void ] $result.Add( $parallelTasks.Clone() )
     }
 
-    $result += , $TasksWithNoDependencies.Clone()
+    [ void ] $result.Add( $TasksWithNoDependencies.Clone() )
 
     return $result
 }

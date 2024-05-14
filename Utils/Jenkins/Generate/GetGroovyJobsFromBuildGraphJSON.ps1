@@ -1,5 +1,3 @@
-# . "$PSScriptRoot\GetSortedTasks.ps1"
-
 function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, [array] $PropertyToParameters = @(), [bool] $RunAsSingleNode = $True ) {
     # Generate a pipeline object based on the JSON
     $PlatformBuildPipeline = @{}
@@ -20,6 +18,7 @@ function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, 
 
     foreach ( $Group in $JSON.Groups ) {
         $PlatformName = $Group."Agent Types"[ 0 ]
+        $PlatformName = $PlatformName -replace "_Licensee" -replace ""
 
         [void] $Platforms.Add( $PlatformName )
         
@@ -66,10 +65,6 @@ function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, 
         $BuildPipeline = $PlatformBuildPipeline[ $Platform ]
 
         $Groups = New-Object System.Collections.Generic.HashSet[string]
-        # foreach ( $Group in $JobToGroupMap.Values) {
-        #     # Add the value to the HashSet (it will automatically handle duplicates)
-        #     [void] $Groups.Add( "{0}" -f $Group )
-        # }
 
         $Dependencies = @()
         foreach ( $BuildGroup in $BuildPipeline ) {
@@ -89,21 +84,6 @@ function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, 
                 $Dependencies += , @( $BuildGroup.Name, $RequiredJobGroupName )
             }
         }
-        
-        # $Tasks = [System.Collections.Generic.HashSet[ string ]]::new()
-        
-        # foreach ( $Task in $JobToGroupMap.Keys ) {
-        #     [void] $Tasks.Add( $Task )
-        # }
-        
-
-        # foreach ( $BuildGroup in $BuildPipeline ) {
-        #     foreach ( $Job in $BuildGroup.Jobs ) {
-        #         foreach ( $Dependency in $Job.Needs ) {
-        #             $Dependencies += , @( $Job.Name, $Dependency )
-        #         }
-        #     }
-        # }
 
         $ParallelGroups = GetSortedTasks $Groups $Dependencies
 
@@ -112,52 +92,53 @@ function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, 
         for ( $i = $LastIndex; $i -ge 0; $i-- ) {
             $Groups = $ParallelGroups[ $i ]
 
-            if ( $Groups -is [ array ] ) {
-                $ParallelGroupsStr = @()
-                $TasksStr = ""
+            # Powershell unrolls elements of an array when it returns it from a function
+            # Since we're iterating the result backwards, stop as soon as we have an unrolled element
+            if ( $Groups -is [ String ] ) {
+                break
+            }
 
-                foreach ( $Group in $Groups ) {
-                    foreach ( $BuildGroup in $BuildPipeline ) {
-                        if ( $BuildGroup.Name -eq $Group ) {
-                            $Jobs = @()
-                            foreach ( $Job in $BuildGroup.Jobs ) {
-                                $Jobs += @"
+            $ParallelGroupsStr = @()
+            $TasksStr = ""
+
+            foreach ( $Group in $Groups ) {
+                foreach ( $BuildGroup in $BuildPipeline ) {
+                    if ( $BuildGroup.Name -eq $Group ) {
+                        $Jobs = @()
+                        foreach ( $Job in $BuildGroup.Jobs ) {
+                            $Jobs += @"
 "{0}"
 "@ -f $Job.Name
-                            }
-                            $TasksStr = @"
-[ 
-            {0} 
-        ]
-"@ -f ( $Jobs -join ",`n            " )
                         }
+                        $TasksStr = @"
+[ 
+        {0} 
+    ]
+"@ -f ( $Jobs -join ",`n            " )
                     }
+                }
 
-                    $GroupsStr = @"
+                $GroupsStr = @"
 jobs[ "{0}" ] = {{
-    runBuildGraph( 
-        "{1}", 
-        {2},
-        "{3}",
-        properties 
-        )
+runBuildGraph( 
+    "{1}", 
+    {2},
+    "{3}",
+    properties 
+    )
 }}
 "@ -f $Group, $Group, $TasksStr, $Platform
 
-                    $ParallelGroupsStr += ,$GroupsStr
-                }
+                $ParallelGroupsStr += ,$GroupsStr
+            }
 
-                $ParallelJobs = @"
+            $ParallelJobs = @"
 jobs = [:]
 {0}
 jobs.failFast = true
 parallel jobs
 `n
 "@ -f ( $ParallelGroupsStr -join "`n" )
-
-            } else {
-                Break;
-            }
 
             $PlatformJobs += $ParallelJobs
         }
