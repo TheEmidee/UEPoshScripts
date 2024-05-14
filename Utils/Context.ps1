@@ -12,8 +12,8 @@ class Context
     {
         $this.ProjectInfos = Get-ProjectInfos
         $this.ProjectInfos.DumpToHost()
-        
-        $this.EngineDefinition = Get-EngineDefinition( $this.ProjectInfos.UProjectPath )
+
+        $this.EngineDefinition = Get-EngineDefinition( $this.ProjectInfos )
 
         if ( [string]::IsNullOrWhiteSpace( $this.EngineDefinition.Path ) ) {
             throw "Impossible to get a correct path to a UE installation"
@@ -41,10 +41,6 @@ class Context
 
         $ConfigFolder = "Config\PoshScripts"
 
-        if ( $this.ProjectInfos.UProjectPath -ne "" ) {
-            $this.PoshScriptsConfigFolder = Join-Path $this.ProjectInfos.RootFolder -ChildPath $ConfigFolder
-        } else {
-            $this.PoshScriptsConfigFolder = Join-Path $this.EngineDefinition.Path -ChildPath $ConfigFolder
-        }
+        $this.PoshScriptsConfigFolder = Join-Path $this.ProjectInfos.RootFolder -ChildPath $ConfigFolder
     }
 }
