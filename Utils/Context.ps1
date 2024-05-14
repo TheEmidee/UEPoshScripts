@@ -33,7 +33,7 @@ class Context
             throw "Impossible to get a correct path to RunUAT.bat"
         }
 
-        if ( ( Test-Path $this.UBTPath ) -eq $False ) {
+        if ( ( $this.ProjectInfos.IsEngine -eq $False ) -and ( Test-Path $this.UBTPath ) -eq $False ) {
             throw "Impossible to get a correct path to UnrealBuildTool.exe"
         }
 
