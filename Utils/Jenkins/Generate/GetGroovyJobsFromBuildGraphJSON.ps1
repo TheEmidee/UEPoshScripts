@@ -107,25 +107,25 @@ function GetGroovyJobsFromBuildGraphJSON( $JSON, [hashtable] $Properties = @{}, 
                         $Jobs = @()
                         foreach ( $Job in $BuildGroup.Jobs ) {
                             $Jobs += @"
-"{0}"
+    "{0}"
 "@ -f $Job.Name
                         }
                         $TasksStr = @"
 [ 
         {0} 
-    ]
+        ]
 "@ -f ( $Jobs -join ",`n            " )
                     }
                 }
 
                 $GroupsStr = @"
 jobs[ "{0}" ] = {{
-runBuildGraph( 
-    "{1}", 
-    {2},
-    "{3}",
-    properties 
-    )
+    runBuildGraph( 
+        "{1}", 
+        {2},
+        "{3}",
+        properties 
+        )
 }}
 "@ -f $Group, $Group, $TasksStr, $Platform
 
