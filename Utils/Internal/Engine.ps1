@@ -73,8 +73,8 @@ function Resolve-EnginePath( [String] $EngineAssociation ) {
 }
 
 function Get-EngineVersion( [string] $EnginePath ) {
-    $build_version_file_path = Join-Path -Path $EnginePath -ChildPath "Engine\Build\Build.version"
-    $jenkins_version_file_path = Join-Path -Path $EnginePath -ChildPath "Engine\Build\JenkinsBuild.version"
+    $build_version_file_path = Join-Path -Path $EnginePath -ChildPath "Build\Build.version"
+    $jenkins_version_file_path = Join-Path -Path $EnginePath -ChildPath "Build\JenkinsBuild.version"
 
     if ( [System.IO.File]::Exists( $build_version_file_path ) -eq $False ) {
         Write-Warning "Impossible to find the file ${build_version_file_path}"

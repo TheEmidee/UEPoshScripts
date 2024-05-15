@@ -25,9 +25,9 @@ class Context
 
         $this.EngineDefinition.DumpToHost()
 
-        $this.UATPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Engine\Build\BatchFiles\RunUAT.bat"
-        $this.UBTPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.exe"
-        $this.BuildPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Engine\Build\BatchFiles\Build.bat"
+        $this.UATPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Build\BatchFiles\RunUAT.bat"
+        $this.UBTPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.exe"
+        $this.BuildPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Build\BatchFiles\Build.bat"
 
         if ( ( Test-Path $this.UATPath ) -eq $False ) {
             throw "Impossible to get a correct path to RunUAT.bat"
@@ -37,7 +37,7 @@ class Context
             throw "Impossible to get a correct path to UnrealBuildTool.exe"
         }
 
-        $this.EditorPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Engine\Binaries\Win64\UnrealEditor.exe"
+        $this.EditorPath = Join-Path -Path $this.EngineDefinition.Path -ChildPath "Binaries\Win64\UnrealEditor.exe"
 
         $ConfigFolder = "Config\PoshScripts"
 
