@@ -5,6 +5,8 @@ function CI_RunBuildGraph {
     [string] $TaskProperties = ""
     )
 
+    Write-Host "Running buildgraph target $($BuildGraphTarget) on machine $($env:computername)"
+
     $SharedStorageDir = "$($global:JenkinsConfig.BUILDGRAPH_SHARED_STORAGE_PATH)\$($BuildTag)"
 
     $ExtraArguments += " $($TaskProperties) -BuildMachine -SharedStorageDir=`"$($SharedStorageDir)`" -WriteToSharedStorage -SingleNode=`"$($BuildGraphTarget)`" -NoP4"
