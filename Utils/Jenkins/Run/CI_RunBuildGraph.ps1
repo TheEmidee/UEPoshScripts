@@ -24,6 +24,8 @@ function CI_RunBuildGraph {
     $BuildgraphLocalFolder = $global:context.ProjectInfos.ProjectFolders.SavedFolders.Buildgraph
     $CITaskVersionFile = Join-Path -Path $SavedFolder -ChildPath "CITaskVersionFile.txt"
 
+    Write-Host "Managing file CITaskVersionFile.txt in $($SavedFolder)"
+
     if ( Test-Path $CITaskVersionFile ) {
         Write-Host "Found CITaskVersionFile.txt"
         $Version = Get-Content -Path $CITaskVersionFile
@@ -31,6 +33,7 @@ function CI_RunBuildGraph {
             Write-Host "CITaskVersionFile.txt contains a different build tag ( $($Version) ) than what is being built ( $($BuildTag) )"
             $MustDeleteLocalBuildgraphFolder = $True
         }
+        Write-Host "CITaskVersionFile.txt contains the same build tag ( $($Version) ). Do nothing."
     } else {
         Write-Host "Cannot find CITaskVersionFile.txt"
         Set-Content -Path $CITaskVersionFile -Value $BuildTag
