@@ -92,12 +92,16 @@ function Get-EngineVersion( [string] $EnginePath ) {
     return [Version]::new( 0, 0, 0 )
 }
 
-function Get-EngineDefinition( [String] $UProjectPath ) {
+function Get-EngineDefinition( [ProjectInfos] $ProjectInfos ) {
     $engine_definition = [EngineDefinition]::new();
 
-    $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $UProjectPath )
-    $engine_definition.Path = Resolve-EnginePath( $engine_definition.EngineAssociation )
-    $engine_definition.Version = Get-EngineVersion( $engine_definition.Path )
+    if ( $ProjectInfos.IsEngine -eq $False ) {
+        $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $ProjectInfos.UProjectPath )
+        $engine_definition.Path = Resolve-EnginePath( $engine_definition.EngineAssociation )
+    } else {
+        $engine_definition.Path = $ProjectInfos.RootFolder
+    }
 
+    $engine_definition.Version = Get-EngineVersion( $engine_definition.Path )
     return $engine_definition
 }

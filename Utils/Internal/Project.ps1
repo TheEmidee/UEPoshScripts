@@ -41,6 +41,7 @@ class ProjectInfos
     [String] $ProjectName;
     [String] $UProjectPath;
     [ProjectFolders] $ProjectFolders;
+    [bool] $IsEngine;
 
     ProjectInfos() {
         $ParentDirectory = Get-Item $PSScriptRoot
@@ -58,9 +59,23 @@ class ProjectInfos
 
         $this.RootFolder = $ParentDirectory
         $UProjectFile = Get-ChildItem $this.RootFolder -File '*.uproject'
-
-        $this.ProjectName = $UProjectFile.BaseName
         $this.UProjectPath = $UProjectFile.FullName
+
+        $this.IsEngine = ( Test-Path $This.UProjectPath ) -eq $False
+
+        if ( $this.IsEngine -eq $False ) {
+            $this.ProjectName = $UProjectFile.BaseName
+        } else {
+            $EnginePath = Resolve-Path ( Join-Path -Path $PSScriptRoot -ChildPath "../../../" )
+    
+            if ( Test-Path -Path ( "$($EnginePath)/Setup.bat" ) ) {
+                $this.ProjectName = "Engine"
+                $this.RootFolder = $EnginePath
+            } else {
+                exit 1
+            }
+        }
+
         $this.ProjectFolders = [ProjectFolders]::new( $this.RootFolder )
     }
 
