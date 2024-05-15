@@ -70,7 +70,7 @@ class ProjectInfos
     
             if ( Test-Path -Path ( "$($EnginePath)/Setup.bat" ) ) {
                 $this.ProjectName = "Engine"
-                $this.RootFolder = $EnginePath
+                $this.RootFolder = ( Join-Path -Path $EnginePath -ChildPath "Engine" )
             } else {
                 exit 1
             }
