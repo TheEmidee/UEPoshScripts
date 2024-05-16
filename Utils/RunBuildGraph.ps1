@@ -16,12 +16,18 @@ function RunBuildGraph( [string] $target = "", [hashtable] $extra_properties = @
 
     $AutomationScriptsDirectory = $global:ProjectConfig.AUTOMATION_SCRIPTS_DIRECTORY
 
-    if( ( [string]::IsNullOrEmpty( $AutomationScriptsDirectory ) -eq $False ) -and ( Test-Path -Path $AutomationScriptsDirectory ) )
-    {
+    if ( [string]::IsNullOrEmpty( $AutomationScriptsDirectory ) ) {
+        Write-Host "No automation scripts directory is set"
+    } else {
         $scripts_dir = Join-Path -Path $global:context.ProjectInfos.RootFolder -ChildPath $AutomationScriptsDirectory
+
+        Write-Host "Automation scripts directory is set to $($scripts_dir)"
 
         if ( ( Test-Path $scripts_dir ) -eq $True ) {
             $arguments += " -ScriptDir=`"$($scripts_dir)`""
+        } else {
+            Write-Error "Automation scripts directory does not exist !"
+            exit 1
         }
     }
 
