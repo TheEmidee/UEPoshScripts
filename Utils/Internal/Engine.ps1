@@ -97,7 +97,7 @@ function Get-EngineDefinition( [ProjectInfos] $ProjectInfos ) {
 
     if ( $ProjectInfos.IsEngine -eq $False ) {
         $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $ProjectInfos.UProjectPath )
-        $engine_definition.Path = Resolve-EnginePath( $engine_definition.EngineAssociation )
+        $engine_definition.Path = Join-Path -Path ( Resolve-EnginePath( $engine_definition.EngineAssociation ) ) -ChildPath "Engine"
     } else {
         $engine_definition.Path = $ProjectInfos.RootFolder
     }
