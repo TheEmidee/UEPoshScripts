@@ -84,9 +84,10 @@ function Get-EngineVersion( [string] $EnginePath ) {
 
         if ( [System.IO.File]::Exists( $jenkins_version_file_path ) -eq $True ) {
             $revision_number = Get-Content -Path $jenkins_version_file_path
+            return [Version]::new( $ue_json.MajorVersion, $ue_json.MinorVersion, $ue_json.PatchVersion, $revision_number )
         }
 
-        return [Version]::new( $ue_json.MajorVersion, $ue_json.MinorVersion, $ue_json.PatchVersion, $revision_number )
+        return [Version]::new( $ue_json.MajorVersion, $ue_json.MinorVersion, $ue_json.PatchVersion )
     }
 
     return [Version]::new( 0, 0, 0 )
