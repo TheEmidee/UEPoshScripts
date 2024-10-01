@@ -1,6 +1,23 @@
-function RunEditor( [string[]] $arguments )
-{
+function RunEditor {
+    param (
+        [string[]] $arguments
+     )
+
+    
     $all_arguments = @( $global:context.ProjectInfos.UProjectPath ) + $arguments
-    $Process = Start-Process -FilePath $global:context.EditorPath -ArgumentList $all_arguments
-    return $Process.ExitCode
+
+    $process = Start-Process -FilePath $global:context.EditorPath -ArgumentList $all_arguments
+    return $process.ExitCode
+}
+
+function RunEditorAndWait {
+    param (
+        [string[]] $arguments
+     )
+
+    
+    $all_arguments = @( $global:context.ProjectInfos.UProjectPath ) + $arguments
+
+    $process = Start-Process -FilePath $global:context.EditorPath -ArgumentList $all_arguments -Wait
+    return $process.ExitCode
 }
