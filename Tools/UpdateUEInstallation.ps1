@@ -1,11 +1,7 @@
 # This script aims at updating a local Unreal Engine build with a new one from a remote location
 # Prerequisites for this script to work:
 # - $RemoteFolder must point to a folder (can be a network folder) that contains a list of 7z files. Each of these archives is a different engine version which must respect the following naming convention : UEMajor.Minor.Patch.JenkinsBuild. For ex : UE5.4.4.96.7z
-# - $LocalFolder must point to the parent folder of the engine installation. (If the engine is located at C:\Dev\UE\UE5.4-MyGame, then $LocalFolder must be set to C:\Dev\UE.
-# If this parameter is not set, then the script will use its current location (with $PSScriptRoot) as the working directory
-# - UEVersionName is the name of the engine used by your project. It is used to find the correct sub-folder from $RemoteFolder and the correct sub-folder for the local installation
-# For example if $RemoteFolder points to a shared folder \\nas\versions\UE, and $UEVersionName is set to "MyGame", then this script will list all the 7z archives in a subfolder of \\nas\versions\UE that contains the string "MyGame"
-# Then if this script is launched from a local directory C:\Dev\UE, then it will find a local sub-folder of C:\Dev\UE that has the string "MyGame"
+# - $LocalFolder must point to the folder of the engine installation.
 # - The local engine folder must have a file named JenkinsBuild.version in the folder Engine\Build that indicates the jenkins version (the 96 from above)
 
 # What this script does : 
@@ -15,16 +11,14 @@
 
 param (
     [Boolean] $unattended = $False,
-    [String] $RemoteFolder,
-    [String] $LocalFolder,
-    [string] $UEVersionName = "Game"
+    [String] $RemoteFolder = "",
+    [String] $LocalFolder = ""
 )
 
 Write-Host "Parameters :"
 Write-Host "unattended : $($unattended)"
 Write-Host "RemoteFolder : $($RemoteFolder)"
 Write-Host "LocalFolder : $($LocalFolder)"
-Write-Host "UEVersionName : $($UEVersionName)"
 Write-Host ""
 
 # --- FUNCTIONS ---
@@ -190,23 +184,8 @@ function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
 
 # --- Execution ---
 
-$RemoteFolder = Get-FirstFolderContainingString -Path $RemoteFolder -SearchString $UEVersionName
-if ( $RemoteFolder -eq "" ) {
-    Write-Error "Impossible to find the engine remote folder"
-    exit
-}
 Write-Host "Remote Path : $($RemoteFolder)"
-
-if ( $LocalFolder -eq "" ) {
-    $LocalFolder = $PSScriptRoot
-}
-
-$localEnginePath = Get-FirstFolderContainingString -Path $LocalFolder -SearchString $UEVersionName
-if ( $localEnginePath -eq "" ) {
-    Write-Error "Impossible to find the engine local folder"
-    exit
-}
-Write-Host "Local Path : $($localEnginePath)"
+Write-Host "Local Path : $($LocalFolder)"
 
 $selectedFile = Select-FileFromFolder -folderPath $RemoteFolder -unattended $unattended
 
@@ -218,7 +197,7 @@ $file = Get-Item $selectedFile
 
 Write-Host "Selected File : $($selectedFile)"
 
-$localEngineVersion = Get-EngineVersionFromFolder -Folder $localEnginePath
+$localEngineVersion = Get-EngineVersionFromFolder -Folder $LocalFolder
 Write-Host "Local engine version : $($localEngineVersion)"
 
 $remoteEngineVersion = Get-EngineVersionFromArchiveName -ArchiveName $file.Name
@@ -229,18 +208,19 @@ if ( $localEngineVersion -ge $remoteEngineVersion ) {
     exit
 }
 
-Remove-Folder -folderPath $localEnginePath -unattended $unattended
+Remove-Folder -folderPath $LocalFolder -unattended $unattended
 
-$localArchivePath = Join-Path -Path $LocalFolder -ChildPath $file.Name
+$localRootFolder = Split-Path -Path $LocalFolder -Parent
+$localArchivePath = Join-Path -Path $localRootFolder -ChildPath $file.Name
 
 if ( ( Test-Path -Path $localArchivePath ) -eq $False ) {
-    Copy-Archive $file.DirectoryName $LocalFolder $file.Name
+    Copy-Archive $file.DirectoryName $localRootFolder $file.Name
 } else {
     Write-Host "The archive already exists"
 }
 
 if (Test-Path $localArchivePath) {
-    Export-7ZipArchive -archivePath $localArchivePath -outputFolder $localEnginePath
+    Export-7ZipArchive -archivePath $localArchivePath -outputFolder $LocalFolder
 } else {
     Write-Error "File not found: $localArchivePath"
 }
