@@ -20,6 +20,12 @@ param (
     [string] $UEVersionName = "Game"
 )
 
+Write-Host "Parameters :"
+Write-Host "unattended : $($unattended)"
+Write-Host "RemoteFolder : $($RemoteFolder)"
+Write-Host "LocalFolder : $($LocalFolder)"
+Write-Host "UEVersionName : $($UEVersionName)"
+
 # --- FUNCTIONS ---
 
 function Get-FirstFolderContainingString {
