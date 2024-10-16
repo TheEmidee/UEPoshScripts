@@ -224,9 +224,13 @@ if ( $localEngineVersion -ge $remoteEngineVersion ) {
 
 Remove-Folder -folderPath $localEnginePath -unattended $unattended
 
-Copy-Archive $file.DirectoryName $LocalFolder $file.Name
-
 $localArchivePath = Join-Path -Path $LocalFolder -ChildPath $file.Name
+
+if ( ( Test-Path -Path $localArchivePath ) -eq $False ) {
+    Copy-Archive $file.DirectoryName $LocalFolder $file.Name
+} else {
+    Write-Host "The archive already exists"
+}
 
 if (Test-Path $localArchivePath) {
     Export-7ZipArchive -archivePath $localArchivePath -outputFolder $localEnginePath
