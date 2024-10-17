@@ -23,6 +23,27 @@ Write-Host ""
 
 # --- FUNCTIONS ---
 
+function Confirm-7zInstallation {
+    $pathDirs = $Env:PATH -split ';'
+    $7zipFound = $false
+
+    foreach ($dir in $pathDirs) {
+        $7zipPath = Join-Path -Path $dir -ChildPath '7z.exe'
+        if (Test-Path $7zipPath) {
+            $7zipFound = $true
+            Write-Host "7-Zip executable found at: $7zipPath"
+            break
+        }
+    }
+
+    if (-not $7zipFound) {
+        Write-Host "7-Zip executable not found in the PATH."
+        return $False;
+    } else {
+        return $True
+    }
+}
+
 function Get-FirstFolderContainingString {
     param (
         [string]$Path,      # The path to search, defaults to the current directory
@@ -184,6 +205,11 @@ function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
 }
 
 # --- Execution ---
+
+if ( -not ( Confirm-7zInstallation ) ) {
+    Write-Error "Unable to find 7-Zip. Make sure it is installed and that it's in the PATH environment variable"
+    exit
+}
 
 Write-Host "Remote Path : $($RemoteFolder)"
 Write-Host "Local Path : $($LocalFolder)"
