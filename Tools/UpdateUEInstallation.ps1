@@ -118,6 +118,7 @@ Function Remove-Folder {
         }
         
         if ( $canDelete -eq $true ) {
+            Write-Host "Deleting folder $($folderPath)"
             # If confirmed, delete the folder
             Remove-Item -Recurse -Force $folderPath
             Write-Host "Folder '$folderPath' has been deleted."

@@ -1,5 +1,6 @@
 class EngineDefinition
 {
+    [String] $RootPath;
     [String] $Path;
     [String] $EngineAssociation;
     [Version] $Version;
@@ -66,7 +67,6 @@ function Resolve-EnginePath( [String] $EngineAssociation ) {
         }
     }
 
-
     # Otherwise, we couldn't locate the engine.
     Write-Error "Unable to locate engine description by `"$EngineAssociation`" (checked registry, Program Files and absolute path)."
     return $null
@@ -98,7 +98,8 @@ function Get-EngineDefinition( [ProjectInfos] $ProjectInfos ) {
 
     if ( $ProjectInfos.IsEngine -eq $False ) {
         $engine_definition.EngineAssociation = Get-ProjectEngineAssociation( $ProjectInfos.UProjectPath )
-        $engine_definition.Path = Join-Path -Path ( Resolve-EnginePath( $engine_definition.EngineAssociation ) ) -ChildPath "Engine"
+        $engine_definition.RootPath = Resolve-EnginePath( $engine_definition.EngineAssociation )
+        $engine_definition.Path = Join-Path -Path $engine_definition.RootPath -ChildPath "Engine"
     } else {
         $engine_definition.Path = $ProjectInfos.RootFolder
     }
