@@ -1,3 +1,5 @@
+Import-Module -Name ( Resolve-Path( Join-Path -Path ( $PSScriptRoot ) -ChildPath "..\UEPoshScripts.psm1" ) ) -ErrorAction Stop -Force
+
 function Get-SubmoduleStatus {
     param (
         [string[]]$StatusOutput
@@ -41,8 +43,8 @@ function Get-SubmoduleActualCommit {
     }
 }
 
-$scriptPath = $PSScriptRoot
-$repoRoot = Resolve-Path (Join-Path $scriptPath "..\..")
+# Get the repository root from the global context
+$repoRoot = Split-Path -Parent $global:context.ProjectInfos.UProjectPath
 Push-Location $repoRoot
 
 try {
