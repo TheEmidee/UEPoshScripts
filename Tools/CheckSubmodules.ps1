@@ -43,7 +43,6 @@ function Get-SubmoduleActualCommit {
     }
 }
 
-# Get the repository root from the global context
 $repoRoot = Split-Path -Parent $global:context.ProjectInfos.UProjectPath
 Push-Location $repoRoot
 
