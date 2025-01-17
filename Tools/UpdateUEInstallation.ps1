@@ -10,8 +10,11 @@
 # - Else the local folder is deleted, then the remote archive is copied locally, then extracted where the previous installation was, and eventually the archive is deleted
 
 param (
+    # Set to true to use robocopy to do a mirror from an unzipped remote folder, instead of downloading a 7z file
     [Boolean] $mirrorLatest = $False,
     [Boolean] $unattended = $False,
+    # Set to true to delete the local folder, to force a fresh installation of the engine
+    [Boolean] $force = $False,
     [String] $RemoteFolder = "",
     [String] $LocalFolder = ""
 )
@@ -19,6 +22,7 @@ param (
 Write-Host "Parameters :"
 Write-Host "mirrorLatest : $($mirrorLatest)"
 Write-Host "unattended : $($unattended)"
+Write-Host "force : $($force)"
 Write-Host "RemoteFolder : $($RemoteFolder)"
 Write-Host "LocalFolder : $($LocalFolder)"
 Write-Host ""
@@ -207,6 +211,20 @@ function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
 }
 
 # --- Execution ---
+
+if ( $force ) {
+    $confirmation = $True
+
+    if ( -not $unattended ) {
+        # Prompt for confirmation
+        $confirmation = Read-Host "Are you sure you want to force a fresh installation of the engine located at $($LocalFolder)? (y/n)"
+        $confirmation = $confirmation -eq 'y'
+    }
+
+    if ( $confirmation ) {
+        Remove-Item $LocalFolder -Force -Recurse
+    }
+}
 
 if ( $mirrorLatest ) {
     Write-Host "Mirror latest engine build from $($RemoteFolder) to $($LocalFolder)"
