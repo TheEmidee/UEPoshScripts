@@ -243,18 +243,22 @@ $file = Get-Item $selectedFile
 
 Write-Host "Selected File : $($selectedFile)"
 
-$localEngineVersion = Get-EngineVersionFromFolder -Folder $LocalFolder
-Write-Host "Local engine version : $($localEngineVersion)"
+if ( ( Test-Path -Path $LocalFolder ) -eq $True ) {
+    $localEngineVersion = Get-EngineVersionFromFolder -Folder $LocalFolder
+    Write-Host "Local engine version : $($localEngineVersion)"
 
-$remoteEngineVersion = Get-EngineVersionFromArchiveName -ArchiveName $file.Name
-Write-Host "Remote engine version : $($remoteEngineVersion)"
+    $remoteEngineVersion = Get-EngineVersionFromArchiveName -ArchiveName $file.Name
+    Write-Host "Remote engine version : $($remoteEngineVersion)"
 
-if ( $localEngineVersion -ge $remoteEngineVersion ) {
-    Write-Host "The local version of the engine is equal or newer than the remote version"
-    exit
+    if ( $localEngineVersion -ge $remoteEngineVersion ) {
+        Write-Host "The local version of the engine is equal or newer than the remote version"
+        exit
+    }
+
+    Remove-Folder -folderPath $LocalFolder -unattended $unattended
+} else {
+    Write-Host "Local folder does not exist."
 }
-
-Remove-Folder -folderPath $LocalFolder -unattended $unattended
 
 $localRootFolder = Split-Path -Path $LocalFolder -Parent
 $localArchivePath = Join-Path -Path $localRootFolder -ChildPath $file.Name
