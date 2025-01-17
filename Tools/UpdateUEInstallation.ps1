@@ -213,16 +213,18 @@ function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
 # --- Execution ---
 
 if ( $force ) {
-    $confirmation = $True
+    if ( Test-Path -Path $LocalFolder ) {
+        $confirmation = $True
 
-    if ( -not $unattended ) {
-        # Prompt for confirmation
-        $confirmation = Read-Host "Are you sure you want to force a fresh installation of the engine located at $($LocalFolder)? (y/n)"
-        $confirmation = $confirmation -eq 'y'
-    }
+        if ( -not $unattended ) {
+            # Prompt for confirmation
+            $confirmation = Read-Host "Are you sure you want to force a fresh installation of the engine located at $($LocalFolder)? (y/n)"
+            $confirmation = $confirmation -eq 'y'
+        }
 
-    if ( $confirmation ) {
-        Remove-Item $LocalFolder -Force -Recurse
+        if ( $confirmation ) {
+            Remove-Item $LocalFolder -Force -Recurse
+        }
     }
 }
 
