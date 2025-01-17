@@ -283,10 +283,23 @@ if ( ( Test-Path -Path $LocalFolder ) -eq $True ) {
 $localRootFolder = Split-Path -Path $LocalFolder -Parent
 $localArchivePath = Join-Path -Path $localRootFolder -ChildPath $file.Name
 
-if ( ( Test-Path -Path $localArchivePath ) -eq $False ) {
-    Copy-Archive $file.DirectoryName $localRootFolder $file.Name
-} else {
+$copyRemoteArchive = $True
+
+if ( ( Test-Path -Path $localArchivePath ) -eq $True ) {
     Write-Host "The archive already exists"
+
+    if ( $force ) {
+        Write-Host "Force delete local archive"
+        Remove-Item $localArchivePath -Force
+    } else {
+        Write-Host "Don't delete local archive. Skip copy"
+        $copyRemoteArchive = $False
+    }
+}
+
+if ( $copyRemoteArchive ) {
+    Write-Host "Copy remote archive to local folder"
+    Copy-Archive $file.DirectoryName $localRootFolder $file.Name
 }
 
 if (Test-Path $localArchivePath) {
