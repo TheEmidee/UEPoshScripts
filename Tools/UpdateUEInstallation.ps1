@@ -10,12 +10,14 @@
 # - Else the local folder is deleted, then the remote archive is copied locally, then extracted where the previous installation was, and eventually the archive is deleted
 
 param (
+    [Boolean] $mirrorLatest = $False,
     [Boolean] $unattended = $False,
     [String] $RemoteFolder = "",
     [String] $LocalFolder = ""
 )
 
 Write-Host "Parameters :"
+Write-Host "mirrorLatest : $($mirrorLatest)"
 Write-Host "unattended : $($unattended)"
 Write-Host "RemoteFolder : $($RemoteFolder)"
 Write-Host "LocalFolder : $($LocalFolder)"
@@ -205,6 +207,23 @@ function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
 }
 
 # --- Execution ---
+
+if ( $mirrorLatest ) {
+    Write-Host "Mirror latest engine build from $($RemoteFolder) to $($LocalFolder)"
+
+    $confirmation = $True
+
+    if ( -not $unattended ) {
+        # Prompt for confirmation
+        $confirmation = Read-Host "Are you sure you want to mirror? (y/n)"
+        $confirmation = $confirmation -eq 'y'
+    }
+
+    if ( $confirmation ) {
+        robocopy $RemoteFolder $LocalFolder /MIR /XO /FFT /r:200 /w:30 /NJH /NJS /nc /ns /np; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+    }
+    exit    
+}
 
 if ( -not ( Confirm-7zInstallation ) ) {
     Write-Error "Unable to find 7-Zip. Make sure it is installed and that it's in the PATH environment variable"
