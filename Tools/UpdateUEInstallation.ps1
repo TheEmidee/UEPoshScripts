@@ -193,16 +193,16 @@ function Get-EngineVersionFromFolder( [string] $Folder ) {
 }
 
 function Get-EngineVersionFromArchiveName( [string] $ArchiveName ) {
-    $regex = [regex]::new('UE(\d+)\.(\d+)\.(\d+)\.(\d+)(.*)\.7z')
+    $regex = [regex]::new('UE-(.*)-(\d+)\.(\d+)\.(\d+)\.(\d+)(.*)\.7z')
 
     if ($regex.IsMatch($ArchiveName)) {
         $regex_matches = $regex.Match($ArchiveName)
 
         # Extract the groups and construct the version number
-        $major = $regex_matches.Groups[1].Value
-        $minor = $regex_matches.Groups[2].Value
-        $patch = $regex_matches.Groups[3].Value
-        $build = $regex_matches.Groups[4].Value
+        $major = $regex_matches.Groups[2].Value
+        $minor = $regex_matches.Groups[3].Value
+        $patch = $regex_matches.Groups[4].Value
+        $build = $regex_matches.Groups[5].Value
 
         return [Version]::new( $major, $minor, $patch, $build )
     } else {
