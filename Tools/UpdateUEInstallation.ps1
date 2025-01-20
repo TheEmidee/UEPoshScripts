@@ -11,7 +11,6 @@
 
 param (
     # Set to true to use robocopy to do a mirror from an unzipped remote folder, instead of downloading a 7z file
-    [Boolean] $mirrorLatest = $False,
     [Boolean] $unattended = $False,
     # Set to true to delete the local folder, to force a fresh installation of the engine
     [Boolean] $force = $False,
@@ -20,7 +19,6 @@ param (
 )
 
 Write-Host "Parameters :"
-Write-Host "mirrorLatest : $($mirrorLatest)"
 Write-Host "unattended : $($unattended)"
 Write-Host "force : $($force)"
 Write-Host "RemoteFolder : $($RemoteFolder)"
@@ -226,23 +224,6 @@ if ( $force ) {
             Remove-Item $LocalFolder -Force -Recurse
         }
     }
-}
-
-if ( $mirrorLatest ) {
-    Write-Host "Mirror latest engine build from $($RemoteFolder) to $($LocalFolder)"
-
-    $confirmation = $True
-
-    if ( -not $unattended ) {
-        # Prompt for confirmation
-        $confirmation = Read-Host "Are you sure you want to mirror? (y/n)"
-        $confirmation = $confirmation -eq 'y'
-    }
-
-    if ( $confirmation ) {
-        robocopy $RemoteFolder $LocalFolder /MIR /XO /FFT /r:200 /w:30 /NJH /NJS /nc /ns /np; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
-    }
-    exit    
 }
 
 if ( -not ( Confirm-7zInstallation ) ) {
