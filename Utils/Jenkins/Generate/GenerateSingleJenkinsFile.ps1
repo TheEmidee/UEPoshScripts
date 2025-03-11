@@ -1,4 +1,4 @@
-function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $BuildgraphTargetName, [hashtable] $BuildgraphPropertyMap, [hashtable] $TokenReplacementMap = @{} ) {
+function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $BuildgraphTargetName, [hashtable] $BuildgraphPropertyMap, [hashtable] $TokenReplacementMap = @{}, [String] $OutputFileOverride = "" ) {
 
     $JSON = GetBuildGraphJSON $BuildgraphTargetName $BuildgraphPropertyMap
     $GroovyJobs_PR = GetGroovyJobsFromBuildGraphJSON $JSON $BuildgraphPropertyMap
@@ -7,7 +7,14 @@ function GenerateSingleJenkinsFile( [String] $TemplateFileName, [String] $Buildg
     }
 
     $OutputFolder = $global:JenkinsConfig.OUTPUT_FOLDER
-    $OutputFile = Join-Path -Path $OutputFolder -ChildPath "$($TemplateFileName)"
+
+    $OutputFileName = $OutputFileOverride
+
+    if ( $OutputFileName -eq "" ) {
+        $OutputFileName = $TemplateFileName
+    }
+
+    $OutputFile = Join-Path -Path $OutputFolder -ChildPath "$($OutputFileName)"
     
     ExportJenkinsFile "$($TemplateFileName).template" $OutputFile $TokenReplacementMap
 }
